@@ -29,8 +29,11 @@ local Window = Rayfield:CreateWindow({
  local Tab = Window:CreateTab("Troll", 4483362458) -- Title, Image
 
  local Section = Tab:CreateSection("Fly Session")
- local Button = Tab:CreateButton({
+ local Keybind = Tab:CreateKeybind({
     Name = "Fly",
+    CurrentKeybind = "e",
+    HoldToInteract = false,
+    Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
     Callback = function()
       local camera = workspace.CurrentCamera
       local char = game.Players.LocalPlayer.Character
@@ -48,29 +51,8 @@ local Window = Rayfield:CreateWindow({
             bodyGyro.D = 10
             bodyGyro.Parent = hrp
 
-            if script.Parent.MouseButton1Click then
-               script.Parent.MouseButton1Click:Connect(function()
-                  local isFlying = not (script.Parent.Parent.Parent.Parent.Parent.isFlying or false)
-                  script.Parent.Parent.Parent.Parent.Parent.isFlying = isFlying
-                  if isFlying then
-                     bodyPos.MaxForce = Vector3.new(math.huge, math.huge,math.huge)
-                     bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-                     bodyPos.Position = hrp.Position +((hrp.Position - camera.CFrame.Position).Unit * 10)
-                     bodyGyro.CFrame = CFrame.new(camera.CFrame.Position, hrp.Position)
-                  else
-                     bodyPos.MaxForce = Vector3.new()
-                     bodyGyro.MaxTorque = Vector3.new()
-                  end
-               end)
-            end
-
-            if script.Parent.MouseButton2Click then
-               script.Parent.MouseButton2Click:Connect(function()
-                  script.Parent.Parent.Parent.Parent.Parent.isFlying = false
-                  bodyPos:Destroy()
-                  bodyGyro:Destroy()
-               end)
-            end
+            bodyPos.Position = hrp.Position +((hrp.Position - camera.CFrame.Position).Unit * 10)
+            bodyGyro.CFrame = CFrame.new(camera.CFrame.Position, hrp.Position)
          end
       end
    end,
@@ -86,14 +68,4 @@ local Window = Rayfield:CreateWindow({
     end,
  })
 
- local Keybind = Tab:CreateKeybind({
-    Name = "Keybind Example",
-    CurrentKeybind = "e",
-    HoldToInteract = false,
-    Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function()
-    -- The function that takes place when the keybind is pressed
-    -- The variable (Keybind) is a boolean for whether the keybind is being held or not (HoldToInteract needs to be true)
-    end,
- })
  Keybind:Set("E") -- Keybind (string)
