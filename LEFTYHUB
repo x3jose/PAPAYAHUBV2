@@ -26,46 +26,52 @@ local Window = Rayfield:CreateWindow({
     }
  })
 
- local Tab = Window:CreateTab("Troll", 4483362458) -- Title, Image
+local Tab = Window:CreateTab("Troll", 4483362458) -- Title, Image
+local Section = Tab:CreateSection("Fly Session")
 
- local Section = Tab:CreateSection("Fly Session")
- local Keybind = Tab:CreateKeybind({
-    Name = "Fly",
-    CurrentKeybind = "e",
-    HoldToInteract = false,
-    Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function()
-      local camera = workspace.CurrentCamera
-      local char = game.Players.LocalPlayer.Character
-      if char then
-         local hrp = char:WaitForChild("HumanoidRootPart")
-         if hrp then
-            local bodyPos = Instance.new("BodyPosition")
-            bodyPos.MaxForce = Vector3.new()
-            bodyPos.D = 10
-            bodyPos.P = 100
+local isFlying = false
+local camera = workspace.CurrentCamera
+local character = game.Players.LocalPlayer.Character
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local bodyPos = Instance.new("BodyPosition")
+local bodyGyro = Instance.new("BodyGyro")
+
+bodyPos.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+
+function fly()
+    if character then
+        local hrp = character:WaitForChild("HumanoidRootPart")
+        if hrp then
             bodyPos.Parent = hrp
-
-            local bodyGyro = Instance.new("BodyGyro")
-            bodyGyro.MaxTorque = Vector3.new()
-            bodyGyro.D = 10
             bodyGyro.Parent = hrp
+            isFlying = true
+        end
+    end
+end
 
-            bodyPos.Position = hrp.Position +((hrp.Position - camera.CFrame.Position).Unit * 10)
-            bodyGyro.CFrame = CFrame.new(camera.CFrame.Position, hrp.Position)
-         end
-      end
-   end,
- })
+function stopFly()
+    if bodyPos then
+        bodyPos:Destroy()
+        bodyGyro:Destroy()
+        isFlying = false
+    end
+end
 
- local Input = Tab:CreateInput({
-    Name = "JOIN THE DISCORD https://discord.gg/TDxTUcUN4X",
-    PlaceholderText = "slider",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(fly)
-    -- The function that takes place when the input is changed
-    -- The variable (Text) is a string for the value in the text box
-    end,
- })
+Section:CreateButton({
+    Name = "Fly",
+    Callback = fly
+})
 
- Keybind:Set("E") -- Keybind (string)
+Section:CreateButton({
+    Name = "Stop Fly",
+    Callback = stopFly
+})
+
+game.Players.LocalPlayer:GetMouse().KeyDown:Connect(function(key)
+    if key == "e" and not isFlying then
+        fly()
+    elseif key == "e" and isFlying then
+        stopFly()
+    end
+end)
