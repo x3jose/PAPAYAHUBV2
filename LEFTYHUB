@@ -1,0 +1,99 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "Papaya Hub",
+    LoadingTitle = "Best Troll Hub",
+    LoadingSubtitle = "by 357jopeezy",
+    ConfigurationSaving = {
+       Enabled = true,
+       FolderName = nil, -- Create a custom folder for your hub/game
+       FileName = "Big Hub"
+    },
+    Discord = {
+       Enabled = false,
+       Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+       RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+    },
+    KeySystem = false, -- Set this to true to use our key system
+    KeySettings = {
+       Title = "Untitled",
+       Subtitle = "Key System",
+       Note = "No method of obtaining the key is provided",
+       FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+       SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+       Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+    }
+ })
+
+ local Tab = Window:CreateTab("Troll", 4483362458) -- Title, Image
+
+ local Section = Tab:CreateSection("Fly Session")
+ local Button = Tab:CreateButton({
+    Name = "Fly",
+    Callback = function()
+      local camera = workspace.CurrentCamera
+      local char = game.Players.LocalPlayer.Character
+      if char then
+         local hrp = char:WaitForChild("HumanoidRootPart")
+         if hrp then
+            local bodyPos = Instance.new("BodyPosition")
+            bodyPos.MaxForce = Vector3.new()
+            bodyPos.D = 10
+            bodyPos.P = 100
+            bodyPos.Parent = hrp
+
+            local bodyGyro = Instance.new("BodyGyro")
+            bodyGyro.MaxTorque = Vector3.new()
+            bodyGyro.D = 10
+            bodyGyro.Parent = hrp
+
+            if script.Parent.MouseButton1Click then
+               script.Parent.MouseButton1Click:Connect(function()
+                  local isFlying = not (script.Parent.Parent.Parent.Parent.Parent.isFlying or false)
+                  script.Parent.Parent.Parent.Parent.Parent.isFlying = isFlying
+                  if isFlying then
+                     bodyPos.MaxForce = Vector3.new(math.huge, math.huge,math.huge)
+                     bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                     bodyPos.Position = hrp.Position +((hrp.Position - camera.CFrame.Position).Unit * 10)
+                     bodyGyro.CFrame = CFrame.new(camera.CFrame.Position, hrp.Position)
+                  else
+                     bodyPos.MaxForce = Vector3.new()
+                     bodyGyro.MaxTorque = Vector3.new()
+                  end
+               end)
+            end
+
+            if script.Parent.MouseButton2Click then
+               script.Parent.MouseButton2Click:Connect(function()
+                  script.Parent.Parent.Parent.Parent.Parent.isFlying = false
+                  bodyPos:Destroy()
+                  bodyGyro:Destroy()
+               end)
+            end
+         end
+      end
+   end,
+ })
+
+ local Input = Tab:CreateInput({
+    Name = "JOIN THE DISCORD https://discord.gg/TDxTUcUN4X",
+    PlaceholderText = "slider",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(fly)
+    -- The function that takes place when the input is changed
+    -- The variable (Text) is a string for the value in the text box
+    end,
+ })
+
+ local Keybind = Tab:CreateKeybind({
+    Name = "Keybind Example",
+    CurrentKeybind = "e",
+    HoldToInteract = false,
+    Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function()
+    -- The function that takes place when the keybind is pressed
+    -- The variable (Keybind) is a boolean for whether the keybind is being held or not (HoldToInteract needs to be true)
+    end,
+ })
+ Keybind:Set("E") -- Keybind (string)
